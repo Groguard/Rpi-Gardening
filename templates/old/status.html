@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+
+<head>
+   <title>RPi Gardening</title>
+   <!-- Latest compiled and minified CSS -->
+   <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}"
+   <!-- Optional theme -->
+   <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-theme.min.css') }}"
+   <!-- Latest compiled and minified JavaScript -->
+   <meta charset="utf-8">
+   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+   <meta name="viewport" content="width=device-width, initial-scale=1"/>
+   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}"/>
+   <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+   <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.0/jquery.mobile-1.4.0.min.css" />
+   <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+   <script src="http://code.jquery.com/mobile/1.4.0/jquery.mobile-1.4.0.min.js"></script>
+   <style>
+       body {
+           background: #ddd;
+       }
+
+       #container {
+           width: 80%;
+           margin: auto;
+           position: relative;
+       }
+   </style>
+</head>
+{% for pin in pins %}
+<script type=text/javascript>
+    $(
+    // When the a button is pressed (change)
+    // do an ajax request to server to change the state
+    function button() 
+    {
+        $('#{{ pin }}').change(function() 
+        {
+        $.getJSON('/_led', {state: $('#{{ pin }}').val(), pin: $('#{{ pin }}').attr("name")});
+        });
+    }
+    );      
+</script>
+{% endfor %}
+
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="/">RPi Gardening</a>
+    </div>
+    <ul class="nav navbar-nav">
+    </ul>
+    <ul class="nav navbar-nav navbar-right">
+      <li><a href="/logout"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+    </ul>
+  </div>
+</nav>
+
+<body>
+<p id="time"></p>
+
+    <div id="container">
+        <div class="pricing-table basic">
+            <span class="table-head">
+                Zone 1
+            </span>
+            {% for pin in pins %}
+            <span class="price">
+                {{ pins[pin].name }}
+            </span>
+            <span class="table-row">
+            <select name="{{ pin }}" id="{{ pin }}" data-role="slider" style='float:right;'>
+            <option value="on">OFF</option>
+            <option value="off">ON</option>
+            </select>
+            </span>
+            <span class="table-row">Timer: {{ pins[pin].timerstate }}</span>
+            <span class="table-row">Time ON: {{ pins[pin].timeon }} Hr(s)</span>
+            <span class="table-row">Time OFF: {{ pins[pin].timeoff }}Hr(s)</span>  
+            {% endfor %}
+        </div>
+    </div>
+	
+<script>
+var d = new Date();
+document.getElementById("time").innerHTML = d;
+</script>
+
+</html>
